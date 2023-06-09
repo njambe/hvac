@@ -338,6 +338,40 @@ class Pki(VaultApiBase):
             json=params,
         )
 
+    def set_issuers_configuration(self, new_default, default_follows_latest_issuer=None, mount_point=DEFAULT_MOUNT_POINT):
+        """Set Issuer Configuration.
+
+        Allows setting the value of the default issuer.
+
+        Supported methods:
+            POST: /{mount_point}/config/issuers. Produces: 200 application/json
+
+        :param new_default: Specifies the default issuer (by reference; either a name or an ID).
+        :type new_default: str | unicode
+        :param default_follows_latest_issuer: Specifies whether a root creation or an issuer import operation updates the default issuer to the newly added issuer.
+        :type default_follows_latest_issuer: bool
+        :param mount_point: The "path" the method/backend was mounted on.
+        :type mount_point: str | unicode
+        :return: The JSON response of the request.
+        :rtype: requests.Response
+        """
+        api_path = utils.format_url(
+            "/v1/{mount_point}/config/issuers",
+            mount_point=mount_point,
+        )
+
+        params = {
+            "default": new_default
+        }
+
+        if default_follows_latest_issuer is not None:
+            params['default_follows_latest_issuer'] = default_follows_latest_issuer
+
+        self.client.secrets.pki._adapter.post(
+            url=api_path,
+            json=params
+        )
+
     def generate_certificate(
         self,
         name,
